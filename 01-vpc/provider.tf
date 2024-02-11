@@ -1,19 +1,20 @@
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
-      version = "5.31.0" # AWS provider version, not terraform version
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
     }
   }
-
-  backend "s3" {
-    bucket = "daws76s-state-dev"
-    key    = "vpc"
-    region = "us-east-1"
-    dynamodb_table = "daws76s-locking-dev"
-  }
+  backend "s3"{
+  bucket = "tfstate-ssr-bucket"
+  key = "vpc-complete"
+  region = "us-east-1"
+  dynamodb_table = "ssrg-locking"
+}
 }
 
+# Configure the AWS Provider
 provider "aws" {
   region = "us-east-1"
 }
+
