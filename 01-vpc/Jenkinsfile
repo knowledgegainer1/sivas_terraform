@@ -7,17 +7,11 @@ pipeline {
     options {
         ansiColor('xterm')
     }
-    parameters {
-        choice(name: 'action', choices: ['apply', 'destroy'], description: 'Pick something')
+       choice(name: 'action', choices: ['apply', 'destroy'], description: 'Pick something')
     }
     // build
     stages {
         stage('Init') {
-             when {
-                expression {
-                    params.action == 'apply'
-                }
-            }
             steps {
                 sh '''
                     cd 01-vpc
@@ -26,11 +20,6 @@ pipeline {
             }
         }
         stage('Plan') {
-             when {
-                expression {
-                    params.action == 'apply'
-                }
-            }
             steps {
                 sh '''
                     cd 01-vpc
@@ -65,7 +54,10 @@ pipeline {
             input {
                 message 'Should we continue?'
                 ok 'Yes, we should.'
-            
+            // submitter "alice,bob"
+            // parameters {
+            //     string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+            // }
             }
             steps {
                 sh '''
