@@ -6,7 +6,6 @@ pipeline {
     }
     options {
         ansiColor('xterm')
-        
     }
     parameters {
         choice(name: 'action', choices: ['apply', 'destroy'], description: 'Pick something')
@@ -15,72 +14,66 @@ pipeline {
     stages {
         stage('Init') {
             steps {
-                sh """
+                sh '''
                     cd 01-vpc
                     terraform init -reconfigure
-                """
+                '''
             }
         }
         stage('Plan') {
             steps {
-                sh """
+                sh '''
                     cd 01-vpc
                     terraform plan
-                """
+                '''
             }
         }
         stage('Deploy') {
             when {
-                expression { 
+                expression {
                     params.action == 'apply'
                 }
             }
             input {
-                message "Should we continue?"
-                ok "Yes, we should."
-                // submitter "alice,bob"
-                // parameters {
-                //     string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
-                // }
+                message 'Should we continue?'
+                ok 'Yes, we should.'
+            
             }
             steps {
-                sh """
+                sh '''
                     cd 01-vpc
                     terraform apply -auto-approve
-                """
+                '''
             }
         }
         stage('Destroy') {
             when {
-                expression { 
+                expression {
                     params.action == 'destroy'
                 }
             }
             input {
-                message "Should we continue?"
-                ok "Yes, we should."
-                // submitter "alice,bob"
-                // parameters {
-                //     string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
-                // }
+                message 'Should we continue?'
+                ok 'Yes, we should.'
+            
             }
             steps {
-                sh """
+                sh '''
                     cd 01-vpc
                     terraform destroy -auto-approve
-                """
+                '''
             }
         }
     }
     // post build
-    post { 
-        always { 
+    post {
+        always {
             echo 'I will always say Hello again!'
         }
-        failure { 
+        failure {
             echo 'this runs when pipeline is failed, used generally to send some alerts'
         }
-        success{
+        success {
             echo 'I will say Hello when pipeline is success'
         }
     }
