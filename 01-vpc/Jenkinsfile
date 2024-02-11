@@ -13,6 +13,11 @@ pipeline {
     // build
     stages {
         stage('Init') {
+             when {
+                expression {
+                    params.action == 'apply'
+                }
+            }
             steps {
                 sh '''
                     cd 01-vpc
@@ -21,6 +26,11 @@ pipeline {
             }
         }
         stage('Plan') {
+             when {
+                expression {
+                    params.action == 'apply'
+                }
+            }
             steps {
                 sh '''
                     cd 01-vpc
