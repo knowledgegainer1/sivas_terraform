@@ -1,83 +1,55 @@
 pipeline {
     agent {
         node {
-            label 'AGENT-1'
+            label 'AGENT-1' // Corrected syntax: 'label' instead of '='
         }
     }
-    options {
-        ansiColor('xterm')
+    options{
+         timeout(time: 120, unit: 'SECONDS')
+        disableConcurrentBuilds()
     }
-    parameters {
-        choice(name: 'action', choices: ['apply', 'destroy'], description: 'Pick something')
-    }
-    // build
+
     stages {
         stage('Init') {
             steps {
-                sh '''
-                    cd 01-vpc
-                    terraform init -reconfigure
-                '''
+                sh """
+                cd siva-terraform
+
+                terraform init -reconfigure
+                """
             }
         }
-        stage('Plan') {
+        stage('plan') {
             steps {
-                sh '''
-                    cd 01-vpc
-                    terraform plan
-                '''
+                sh """
+                terraform plan
+                """
             }
         }
-        stage('Deploy') {
-            when {
-                expression {
-                    params.action == 'apply'
-                }
-            }
-            input {
-                message 'Should we continue?'
-                ok 'Yes, we should.'
-            
+       
+        stage('apply') {
+            input{
+                message"should we continue"
+                ok"go a head"
+
             }
             steps {
-                sh '''
-                    cd 01-vpc
-                    terraform apply -auto-approve
-                '''
-            }
-        }
-        stage('Destroy') {
-            when {
-                expression {
-                    params.action == 'destroy'
-                }
-            }
-            input {
-                message 'Should we continue?'
-                ok 'Yes, we should.'
-            // submitter "alice,bob"
-            // parameters {
-            //     string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
-            // }
-            }
-            steps {
-                sh '''
-                    cd 01-vpc
-                    terraform destroy -auto-approve
-                '''
+                sh """
+                  terraform apply -auto-approve
+                """
             }
         }
     }
-    // post build
     post {
         always {
-            echo 'I will always say Hello again!'
+            echo 'will run always'
         }
         failure {
-            echo 'this runs when pipeline is failed, used generally to send some alerts'
+            echl "I will run on failuer"
         }
-        success {
-            echo 'I will say Hello when pipeline is success'
+        success{
+            echo "I will run on scuuess inly"
         }
     }
 }
+
