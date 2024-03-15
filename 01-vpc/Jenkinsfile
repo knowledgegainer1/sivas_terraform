@@ -5,8 +5,16 @@ pipeline {
         }
     }
     options{
-         timeout(time: 120, unit: 'SECONDS')
+        ansiColor('xterm')
+        timeout(time: 1, unit: 'HOURS')
         disableConcurrentBuilds()
+    }
+    parameters {
+        
+
+        choice(name: 'CHOICE', choices: ['Apply', 'Destroy'], description: 'Pick something')
+
+       
     }
 
     stages {
@@ -28,6 +36,9 @@ pipeline {
         }
        
         stage('apply') {
+            when {
+                expression { params.CHOICE == 'Apply' }
+             }
             input{
                 message"should we continue"
                 ok"go a head"
@@ -36,6 +47,21 @@ pipeline {
             steps {
                 sh """
                   terraform apply -auto-approve
+                """
+            }
+        }
+        stage('Destroy') {
+            when {
+                expression { params.CHOICE == 'Destroy' }
+             }
+            input{
+                message"should we continue"
+                ok"go a head"
+
+            }
+            steps {
+                sh """
+                  terraform destroy -auto-approve
                 """
             }
         }
