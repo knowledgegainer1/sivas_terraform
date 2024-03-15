@@ -21,7 +21,7 @@ pipeline {
         stage('Init') {
             steps {
                 sh """
-                cd siva-terraform
+                cd 01-vpc
 
                 terraform init -reconfigure
                 """
